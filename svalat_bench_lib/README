@@ -1,0 +1,3 @@
+éditer le Makefile pour mettre les bons path puis mettre à jour la variable LD_LIBRARY_PATH
+
+export LD_LIBRARY_PATH=/home/ensiie/TD2/hp_allocator/hp_allocator_lib/lib:$LD_LIBRARY_PATH
