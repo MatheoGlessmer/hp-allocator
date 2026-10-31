@@ -54,4 +54,4 @@ Les huge pages ne sont donc avantageuses que pour de grands jeux de données.
 
 Le sujet et le benchmark du TD sont fournis par l'enseignant et ne sont pas
 redistribués ici. L'allocateur (`__hp_malloc`, `__hp_free`, liste de blocs
-libres) est de moi. `[outils d'IA éventuels : dire ici pour quoi]`
+libres) est de moi. `[outils d'IA éventuels : usage de Claude pour realiser le readme à partir du rapport]`
