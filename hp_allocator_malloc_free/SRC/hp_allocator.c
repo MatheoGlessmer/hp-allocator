@@ -103,39 +103,42 @@ static struct bloc *recherche_bloc_libre(size_t taille)
 
 static void *__hp_malloc(size_t taille)
 {
-    /*
-     *      * Alloue un bloc de mémoire au moins de taille `taille`.
-     *           */
-
-    static size_t alloue = 0UL; 
+    static size_t alloue = 0UL;
     void *ret;
 
     assert(taille > 0);
 
-    //La fonction calcule_multiple_align() détermine le plus petit
-    //multiple de l’alignement maximal égal ou supérieur à a.
-    //Celle-ci nous permet d’« arrondir » la taille demandée de
-    //sorte que les blocs alloués soit toujours correctement alignés.
-    taille = calcule_multiple_align(taille); 
+    taille = calcule_multiple_align(taille);
 
-    ret = recherche_bloc_libre(taille); //recherche d'un bloc libre
+    ret = recherche_bloc_libre(taille);
 
     if (!ret)
     {
-        if (MEM_SIZE - alloue < TAILLE_EN_TETE + taille)
+        // Vérification sans débordement
+        if (alloue > MEM_SIZE ||
+            TAILLE_EN_TETE > MEM_SIZE - alloue ||
+            taille > MEM_SIZE - alloue - TAILLE_EN_TETE)
         {
-            fprintf(stderr, "Il n'y a plus assez de mémoire disponible.\n");
+            fprintf(stderr,
+                    "Il n'y a plus assez de mémoire disponible.\n");
             return NULL;
         }
 
-        ret = reserve.mem + alloue + TAILLE_EN_TETE;
-        alloue += taille;
-        bloc_init(ret, taille);
+        // Adresse de l'en-tête
+        char *bloc = (char *)reserve.mem + alloue;
+
+        // Adresse des données utilisateur
+        ret = bloc + TAILLE_EN_TETE;
+
+        // Initialisation des métadonnées
+        bloc_init(bloc, taille);
+
+        // Avancement dans la réserve
+        alloue += TAILLE_EN_TETE + taille;
     }
 
     return ret;
 }
-
 
 static void __hp_free(void *ptr)
 {
